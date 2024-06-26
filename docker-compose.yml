@@ -15,7 +15,7 @@ services:
       - POSTGRES_DB=toolkit
     ports:
       - '5432:5432'
-    volumes: 
+    volumes:
       - db:/var/lib/postgresql/data
   test_db:
     image: postgres:14.1-alpine
@@ -30,7 +30,7 @@ services:
     build:
       context: .
       args:
-        INSTALL_COMMUNITY_DEPS: false
+        INSTALL_COMMUNITY_DEPS: true
       dockerfile: ./src/backend/Dockerfile
     develop:
       watch:
@@ -60,7 +60,7 @@ services:
       # Mount data folder to sync uploaded files
       - ./src/backend/data:/workspace/src/backend/data
     # network_mode: host
-      
+
   frontend:
     build:
       context: ./src/interfaces/coral_web
@@ -75,7 +75,7 @@ services:
     develop:
       watch:
         - action: sync
-          path: ./src/interfaces/coral_web 
+          path: ./src/interfaces/coral_web
           target: /app
           ignore:
           - node_modules/

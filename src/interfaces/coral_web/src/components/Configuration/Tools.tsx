@@ -101,6 +101,8 @@ const ToolSection = () => {
               );
               const checked = !!enabledTool;
               const disabled = !is_available;
+              console.log(name, is_available);
+              const forceHide = name === 'Wikipedia';
 
               return (
                 <div key={name} className="flex items-center gap-x-1">
@@ -123,7 +125,7 @@ const ToolSection = () => {
                       label={
                         <div className="flex flex-col gap-y-2">
                           {description && <Text>{description}</Text>}
-                          {error_message && (
+                          {error_message && !forceHide && (
                             <Text className="text-danger-500">Error: {error_message}</Text>
                           )}
                         </div>

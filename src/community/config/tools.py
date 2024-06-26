@@ -9,6 +9,7 @@ from community.tools import (
     ManagedTool,
     PubMedRetriever,
     WolframAlpha,
+    GDriveRetriever,
 )
 
 
@@ -19,6 +20,7 @@ class CommunityToolName(StrEnum):
     File_Upload_LlamaIndex = "File Reader - LlamaIndex"
     Wolfram_Alpha = "Wolfram_Alpha"
     ClinicalTrials = "ClinicalTrials"
+    GDrive = "GDrive"
 
 
 COMMUNITY_TOOLS = {
@@ -37,6 +39,15 @@ COMMUNITY_TOOLS = {
         error_message="ArxivRetriever is not available.",
         category=Category.DataLoader,
         description="Retrieves documents from Arxiv.",
+    ),
+    CommunityToolName.GDrive: ManagedTool(
+        name=CommunityToolName.GDrive,
+        implementation=GDriveRetriever,
+        is_visible=True,
+        is_available=GDriveRetriever.is_available(),
+        error_message="GDriveRetriever is not available.",
+        category=Category.DataLoader,
+        description="Connects to a data source.",
     ),
     CommunityToolName.Connector: ManagedTool(
         name=CommunityToolName.Connector,
