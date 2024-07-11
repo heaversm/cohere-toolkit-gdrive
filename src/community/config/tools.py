@@ -14,6 +14,7 @@ from community.tools import (
 
 
 class CommunityToolName(StrEnum):
+<<<<<<< HEAD
     Arxiv = "Arxiv"
     Connector = "Connector"
     Pub_Med = "Pub Med"
@@ -21,11 +22,19 @@ class CommunityToolName(StrEnum):
     Wolfram_Alpha = "Wolfram_Alpha"
     ClinicalTrials = "ClinicalTrials"
     GDrive = "GDrive"
+=======
+    Arxiv = ArxivRetriever.NAME
+    Connector = ConnectorRetriever.NAME
+    Pub_Med = PubMedRetriever.NAME
+    File_Upload_LlamaIndex = LlamaIndexUploadPDFRetriever.NAME
+    Wolfram_Alpha = WolframAlpha.NAME
+    ClinicalTrials = ClinicalTrials.NAME
+>>>>>>> main
 
 
 COMMUNITY_TOOLS = {
     CommunityToolName.Arxiv: ManagedTool(
-        name=CommunityToolName.Arxiv,
+        display_name="Arxiv",
         implementation=ArxivRetriever,
         parameter_definitions={
             "query": {
@@ -50,7 +59,7 @@ COMMUNITY_TOOLS = {
         description="Connects to a data source.",
     ),
     CommunityToolName.Connector: ManagedTool(
-        name=CommunityToolName.Connector,
+        display_name="Example Connector",
         implementation=ConnectorRetriever,
         is_visible=True,
         is_available=ConnectorRetriever.is_available(),
@@ -59,7 +68,7 @@ COMMUNITY_TOOLS = {
         description="Connects to a data source.",
     ),
     CommunityToolName.Pub_Med: ManagedTool(
-        name=CommunityToolName.Pub_Med,
+        display_name="PubMed",
         implementation=PubMedRetriever,
         parameter_definitions={
             "query": {
@@ -75,7 +84,7 @@ COMMUNITY_TOOLS = {
         description="Retrieves documents from Pub Med.",
     ),
     CommunityToolName.File_Upload_LlamaIndex: ManagedTool(
-        name=CommunityToolName.File_Upload_LlamaIndex,
+        display_name="File Reader",
         implementation=LlamaIndexUploadPDFRetriever,
         is_visible=True,
         is_available=LlamaIndexUploadPDFRetriever.is_available(),
@@ -84,7 +93,7 @@ COMMUNITY_TOOLS = {
         description="Retrieves documents from a file using LlamaIndex.",
     ),
     CommunityToolName.Wolfram_Alpha: ManagedTool(
-        name=CommunityToolName.Wolfram_Alpha,
+        display_name="Wolfram Alpha",
         implementation=WolframAlpha,
         is_visible=False,
         is_available=WolframAlpha.is_available(),
@@ -93,7 +102,7 @@ COMMUNITY_TOOLS = {
         description="Evaluate arithmetic expressions.",
     ),
     CommunityToolName.ClinicalTrials: ManagedTool(
-        name=CommunityToolName.ClinicalTrials,
+        display_name="Clinical Trials",
         implementation=ClinicalTrials,
         is_visible=True,
         is_available=ClinicalTrials.is_available(),

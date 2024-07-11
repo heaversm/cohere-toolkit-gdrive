@@ -36,7 +36,7 @@ COPY pyproject.toml poetry.lock ./
 # Install dependencies
 RUN pip3 install --no-cache-dir poetry==1.6.1 \
     && poetry config installer.max-workers 10 \
-    && poetry install --without setup \
+    && poetry install \
     && (poetry cache clear --all --no-interaction PyPI || true) \
     && (poetry cache clear --all --no-interaction _default_cache || true)
 
@@ -57,8 +57,8 @@ COPY src/interfaces/coral_web/.env.development .
 COPY src/interfaces/coral_web/.env.production .
 
 ENV NEXT_PUBLIC_API_HOSTNAME='/api'
-RUN pnpm install \
-    && pnpm next:build
+RUN npm install \
+    && npm run next:build
 
 # Terrarium
 WORKDIR /usr/src/app

@@ -1,13 +1,6 @@
 import React, { useContext, useMemo, useState } from 'react';
 
-import {
-  BasicButton,
-  Button,
-  Dropdown,
-  DropdownOptionGroups,
-  Input,
-  Text,
-} from '@/components/Shared';
+import { BasicButton, Button, Dropdown, DropdownOptionGroups, Input } from '@/components/Shared';
 import { ModalContext } from '@/context/ModalContext';
 import { useListAllDeployments } from '@/hooks/deployments';
 import { useParamsStore } from '@/stores';
@@ -42,7 +35,7 @@ export const EditEnvVariablesButton: React.FC<{ className?: string }> = () => {
 export const EditEnvVariablesModal: React.FC<{
   defaultDeployment: string;
   onClose: () => void;
-}> = ({defaultDeployment, onClose }) => {
+}> = ({ defaultDeployment, onClose }) => {
   const { data: deployments } = useListAllDeployments();
 
   const [deployment, setDeployment] = useState<string | undefined>(defaultDeployment);

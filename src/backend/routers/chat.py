@@ -7,7 +7,7 @@ from sse_starlette.sse import EventSourceResponse
 
 from backend.chat.custom.custom import CustomChat
 from backend.chat.custom.langchain import LangChainChat
-from backend.database_models import get_session
+from backend.config.routers import RouterName
 from backend.database_models.database import DBSessionDep
 from backend.schemas.chat import ChatResponseEvent, NonStreamedChatResponse
 from backend.schemas.cohere_chat import CohereChatRequest
@@ -18,20 +18,12 @@ from backend.services.chat import (
     generate_langchain_chat_stream,
     process_chat,
 )
-from backend.services.request_validators import (
-    validate_chat_request,
-    validate_deployment_header,
-    validate_user_header,
-)
+from backend.services.request_validators import validate_deployment_header
 
 router = APIRouter(
     prefix="/v1",
-    dependencies=[
-        Depends(get_session),
-        Depends(validate_chat_request),
-        Depends(validate_user_header),
-    ],
 )
+router.name = RouterName.CHAT
 
 
 @router.post("/chat-stream", dependencies=[Depends(validate_deployment_header)])
@@ -39,6 +31,7 @@ async def chat_stream(
     session: DBSessionDep,
     chat_request: CohereChatRequest,
     request: Request,
+    agent_id: str | None = None,
 ) -> Generator[ChatResponseEvent, Any, None]:
     """
     Stream chat endpoint to handle user messages and return chatbot responses.
@@ -47,10 +40,17 @@ async def chat_stream(
         session (DBSessionDep): Database session.
         chat_request (CohereChatRequest): Chat request data.
         request (Request): Request object.
+        agent_id (str | None): Agent ID.
 
     Returns:
         EventSourceResponse: Server-sent event response with chatbot responses.
     """
+    trace_id = None
+    if hasattr(request.state, "trace_id"):
+        trace_id = request.state.trace_id
+
+    user_id = request.headers.get("User-Id", None)
+
     (
         session,
         chat_request,
@@ -62,7 +62,8 @@ async def chat_stream(
         should_store,
         managed_tools,
         deployment_config,
-    ) = process_chat(session, chat_request, request)
+        next_message_position,
+    ) = process_chat(session, chat_request, request, agent_id)
 
     return EventSourceResponse(
         generate_chat_stream(
@@ -74,11 +75,17 @@ async def chat_stream(
                 deployment_config=deployment_config,
                 file_paths=file_paths,
                 managed_tools=managed_tools,
+                session=session,
+                conversation_id=conversation_id,
+                user_id=user_id,
+                trace_id=trace_id,
+                agent_id=agent_id,
             ),
             response_message,
             conversation_id,
             user_id,
             should_store=should_store,
+            next_message_position=next_message_position,
         ),
         media_type="text/event-stream",
     )
@@ -89,6 +96,7 @@ async def chat(
     session: DBSessionDep,
     chat_request: CohereChatRequest,
     request: Request,
+    agent_id: str | None = None,
 ) -> NonStreamedChatResponse:
     """
     Chat endpoint to handle user messages and return chatbot responses.
@@ -97,10 +105,17 @@ async def chat(
         chat_request (CohereChatRequest): Chat request data.
         session (DBSessionDep): Database session.
         request (Request): Request object.
+        agent_id (str | None): Agent ID.
 
     Returns:
         NonStreamedChatResponse: Chatbot response.
     """
+    trace_id = None
+    if hasattr(request.state, "trace_id"):
+        trace_id = request.state.trace_id
+
+    user_id = request.headers.get("User-Id", None)
+
     (
         session,
         chat_request,
@@ -112,7 +127,8 @@ async def chat(
         should_store,
         managed_tools,
         deployment_config,
-    ) = process_chat(session, chat_request, request)
+        next_message_position,
+    ) = process_chat(session, chat_request, request, agent_id)
 
     return generate_chat_response(
         session,
@@ -123,11 +139,15 @@ async def chat(
             deployment_config=deployment_config,
             file_paths=file_paths,
             managed_tools=managed_tools,
+            trace_id=trace_id,
+            user_id=user_id,
+            agent_id=agent_id,
         ),
         response_message,
         conversation_id,
         user_id,
         should_store=should_store,
+        next_message_position=next_message_position,
     )
 
 
@@ -150,6 +170,7 @@ def langchain_chat_stream(
         _,
         should_store,
         managed_tools,
+        _,
         _,
     ) = process_chat(session, chat_request, request)
 

@@ -1,4 +1,4 @@
-import { Transition } from '@headlessui/react';
+import { Transition, TransitionChild } from '@headlessui/react';
 import { useClickOutside } from '@react-hookz/web';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 
@@ -7,7 +7,6 @@ import { ConversationListHeader } from '@/components/ConversationList/Conversati
 import { ConversationListLoading } from '@/components/ConversationList/ConversationListLoading';
 import { ConversationListPanelGroup } from '@/components/ConversationList/ConversationListPanelGroup';
 import { Icon, Input, Text } from '@/components/Shared';
-import { getIsTouchDevice } from '@/hooks/breakpoint';
 import { useConversations } from '@/hooks/conversation';
 import { useSearchConversations } from '@/hooks/search';
 import { useSettingsStore } from '@/stores';
@@ -19,12 +18,16 @@ const sortByDate = (a: Conversation, b: Conversation) => {
 
 type Props = {
   className?: string;
+  agentId?: string;
 };
-export const ConversationListPanel: React.FC<Props> = ({ className }) => {
-  const panelRef = useRef(null);
-  const { data, isLoading: isConversationsLoading, isError } = useConversations();
-  const conversations: Conversation[] = data ?? [];
 
+export const ConversationListPanel: React.FC<Props> = ({ className, agentId }) => {
+  const panelRef = useRef(null);
+  const {
+    data: conversations,
+    isLoading: isConversationsLoading,
+    isError,
+  } = useConversations({ agentId });
   const {
     settings: { isConvListPanelOpen },
   } = useSettingsStore();
@@ -113,13 +116,13 @@ export const ConversationListPanel: React.FC<Props> = ({ className }) => {
   }
 
   return (
-    <Transition.Child
+    <TransitionChild
       ref={panelRef}
       as="nav"
-      enterFrom="lg:opacity-0"
-      enterTo="lg:opacity-100"
+      enterFrom="opacity-100 lg:opacity-0"
+      enterTo="opacity-100"
       leaveFrom="lg:opacity-100"
-      leaveTo="lg:opacity-0"
+      leaveTo="opacity-100 lg:opacity-0"
       className={cn(
         'transition-opacity ease-in-out lg:duration-500',
         'flex h-full w-full flex-grow flex-col',
@@ -140,6 +143,7 @@ export const ConversationListPanel: React.FC<Props> = ({ className }) => {
         enterTo="opacity-100 h-12 mt-5"
         leaveFrom="opacity-100 h-12 mt-5"
         leaveTo="opacity-0 h-0 mt-0"
+        as="div"
         className="z-menu px-4 duration-300 ease-in-out"
       >
         <Input
@@ -158,13 +162,12 @@ export const ConversationListPanel: React.FC<Props> = ({ className }) => {
       <section
         className={cn(
           'relative flex h-0 flex-grow flex-col overflow-y-auto',
-          'px-3 pb-4 pt-3 md:pb-8',
-          { 'hide-scrollbar pr-0.5': !getIsTouchDevice() }
+          'px-3 pb-4 pt-3 md:pb-8'
         )}
       >
         {content}
       </section>
-    </Transition.Child>
+    </TransitionChild>
   );
 };
 
