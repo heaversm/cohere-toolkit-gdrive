@@ -46,6 +46,7 @@ def rerank(
     for query, documents in documents_by_query.items():
         # Only rerank on text of document
         # TODO handle no text in document
+        print(documents)
         docs_to_rerank = [doc["text"] for doc in documents]
 
         # If no documents to rerank, continue to the next query
