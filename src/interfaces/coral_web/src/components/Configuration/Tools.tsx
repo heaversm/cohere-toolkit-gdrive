@@ -101,7 +101,7 @@ const ToolSection = () => {
               );
               const checked = !!enabledTool;
               const disabled = !is_available;
-              console.log(name, is_available);
+              // console.log(name, is_available);
               const forceHide = name === 'Wikipedia';
 
               return (

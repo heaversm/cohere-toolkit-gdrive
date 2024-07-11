@@ -24,6 +24,7 @@ More details: https://docs.cohere.com/docs/connectors
 
 
 class GDriveRetriever(BaseTool):
+    NAME = "gdrive"
 
     # def __init__(self, url: str, auth: str):
     def __init__(self):
@@ -33,18 +34,15 @@ class GDriveRetriever(BaseTool):
         self.auth = GDRIVE_AUTH
 
 
-
     @classmethod
     def is_available(cls) -> bool:
         return True
 
     def call(self, parameters: dict, **kwargs: Any) -> List[Dict[str, Any]]:
         print("abc")
-        # print(GDRIVE_AUTH)
-        # print(GDRIVE_URL)
-        # print(self.auth)
-        # print(self.url)
-        # print(parameters)
+        print(self.auth)
+        print(self.url)
+        print(parameters)
 
         body = parameters
         headers = {

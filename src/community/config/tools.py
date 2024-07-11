@@ -14,22 +14,14 @@ from community.tools import (
 
 
 class CommunityToolName(StrEnum):
-<<<<<<< HEAD
-    Arxiv = "Arxiv"
-    Connector = "Connector"
-    Pub_Med = "Pub Med"
-    File_Upload_LlamaIndex = "File Reader - LlamaIndex"
-    Wolfram_Alpha = "Wolfram_Alpha"
-    ClinicalTrials = "ClinicalTrials"
-    GDrive = "GDrive"
-=======
+
     Arxiv = ArxivRetriever.NAME
     Connector = ConnectorRetriever.NAME
     Pub_Med = PubMedRetriever.NAME
     File_Upload_LlamaIndex = LlamaIndexUploadPDFRetriever.NAME
     Wolfram_Alpha = WolframAlpha.NAME
     ClinicalTrials = ClinicalTrials.NAME
->>>>>>> main
+    GDrive = GDriveRetriever.NAME
 
 
 COMMUNITY_TOOLS = {
